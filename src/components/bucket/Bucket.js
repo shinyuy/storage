@@ -161,7 +161,20 @@ export default class Bucket extends React.Component {
             </table>
           </div>
         ) : (
-          <div></div>
+          <div>
+            <div className="row d-flex justify-content-between">
+              <h5>Bucket Details</h5>
+              <button className="btn btn-danger mx-2 my-2">Delete File</button>
+            </div>
+            <div className="row">
+              <p>File Name: Some name</p>
+              <br />
+              <p>Location: Some location</p>
+              <br />
+              <p>Size: 100mb</p>
+              <br />
+            </div>
+          </div>
         )}
       </div>
     );
