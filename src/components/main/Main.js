@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { API } from "../../utils/Constants";
 
 let schema = Yup.object().shape({
   name: Yup.string().required(),
@@ -11,31 +12,51 @@ let schema = Yup.object().shape({
 
 export default function Main() {
   const [showCreateBucketForm, setShowCreateBucketForm] = useState(false);
-  const [buckets, setBuckets] = useState([
-    { id: 1, name: "BestStorage", location: "Kranj" },
-    { id: 2, name: "Pics", location: "Ljubljana" },
-  ]);
+  const [buckets, setBuckets] = useState([]);
   const { register, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema),
   });
 
   const onSubmit = (data) => {
     console.log(data);
-    /*  fetch(`/api/report/update`, {
+    fetch(`${API}/buckets`, {
       method: "post",
       headers: {
-        // Authorization: `Bearer ${authenticity.token(hash)}`,
+        Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.status); // Will show you the status
+        if (!response.ok) {
+          throw new Error("HTTP status " + response.status);
+        }
+        return response.json();
+      })
       .then((datas) => {
+        console.log(datas);
+          buckets.unshift(datas.bucket);
+      });
 
-      });*/
-    buckets.unshift(data);
     setShowCreateBucketForm(false);
   };
+
+  useEffect(() => {
+    fetch(`${API}/buckets`, {
+      method: "get",
+      headers: {
+        Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((datas) => {
+        console.log(datas);
+        setBuckets(datas.buckets);
+      });
+  }, []);
+
   return (
     <div className="container">
       <h1 className="text-left">Bucket List</h1>
@@ -112,7 +133,7 @@ export default function Main() {
                     </td>
                     <td>
                       <Link to={`/buckets/${bucket.id}`}>
-                        {bucket.location}
+                        {bucket.location.name}
                       </Link>{" "}
                     </td>
                   </tr>
