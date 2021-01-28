@@ -1,60 +1,91 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
+import { API, Token } from "../../utils/Constants";
+import BucketDetails from "./BucketDetails";
 
 export default class Bucket extends React.Component {
   state = {
     active: 1,
-    files: [
-      { id: 1, name: "File01", lastModified: "12/02/2021", size: "3MB" },
-      { id: 2, name: "File02", lastModified: "04/04/2021", size: "50KB" },
-      { id: 3, name: "File03", lastModified: "02/08/2021", size: "12KB" },
-      { id: 4, name: "File04", lastModified: "01/03/2021", size: "90MB" },
-    ],
+    files: [],
     show: false,
+    details: {},
   };
 
   componentDidMount() {
-    let id = this.props.match.params.id;
-    /*  fetch(`/api/report/update`, {
+    let bucket = this.props.match.params.id;
+    fetch(`${API}/buckets/${bucket}/objects`, {
       method: "get",
       headers: {
-        // Authorization: `Bearer ${authenticity.token(hash)}`,
+        Authorization: `Token ${Token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((datas) => {
-
-      });*/
+        this.setState({ files: datas.objects });
+      });
   }
 
   onChangeFile = (event) => {
     event.stopPropagation();
     event.preventDefault();
+    /* const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.src = reader.result;
+      console.log(img.src);
+      let bucket = this.props.match.params.id;
+      fetch(`${API}/buckets/${bucket}/objects`, {
+        method: "post",
+        headers: {
+          Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
+          // "Content-Type": "multipart/form-data; boundary=l3iPy71otz",
+        },
+        data: JSON.stringify({ bucket: bucket, file: img.src }),
+      })
+        .then((response) => response.json())
+        .then((datas) => {
+          console.log(datas);
+        });
+    };
+    reader.readAsDataURL(event.target.files[0]);*/
+
     var file = event.target.files[0];
     console.log(file);
     this.setState({ file });
-
+    let bucket = this.props.match.params.id;
     var form = new FormData();
     form.append("file", this.state.file);
-  };
+    form.append("bucket", bucket);
 
-  delete = () => {
-    let id = this.props.match.params.id;
-    console.log(id);
-    /*  fetch(`/api/report/update`, {
-      method: "get",
+    fetch(`${API}/buckets/${bucket}/objects`, {
+      method: "post",
       headers: {
-        // Authorization: `Bearer ${authenticity.token(hash)}`,
-        "Content-Type": "application/json",
+        Authorization: `Token ${Token}`,
+        "Content-Type": "multipart/form-data; boundary=CUSTOM",
       },
-      body: JSON.stringify(data),
+      data: form,
     })
       .then((response) => response.json())
       .then((datas) => {
+        console.log(datas);
+      });
+  };
 
-      });*/
+  deleteBucket = () => {
+    let bucket = this.props.match.params.id;
+    fetch(`${API}/buckets/${bucket}`, {
+      method: "delete",
+      headers: {
+        Authorization: `Token ${Token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((datas) => {
+        console.log(datas);
+        this.props.history.push("/");
+      });
   };
 
   render() {
@@ -69,7 +100,7 @@ export default class Bucket extends React.Component {
           </Modal.Body>
 
           <Modal.Footer>
-            <button className="btn btn-danger" onClick={this.delete}>
+            <button className="btn btn-danger" onClick={this.deleteBucket}>
               Delete
             </button>
             <button
@@ -150,31 +181,21 @@ export default class Bucket extends React.Component {
               <tbody>
                 {this.state.files.length > 0
                   ? this.state.files.map((file) => (
-                      <tr key={file.id}>
+                      <tr
+                        key={file.id}
+                        onClick={() => this.setState({ details: file })}
+                      >
                         <td>{file.name}</td>
                         <td>{file.lastModified}</td>
                         <td>{file.size}</td>
                       </tr>
                     ))
-                  : "No buckets"}
+                  : "No objects"}
               </tbody>
             </table>
           </div>
         ) : (
-          <div>
-            <div className="row d-flex justify-content-between">
-              <h5>Bucket Details</h5>
-              <button className="btn btn-danger mx-2 my-2">Delete File</button>
-            </div>
-            <div className="row">
-              <p>File Name: Some name</p>
-              <br />
-              <p>Location: Some location</p>
-              <br />
-              <p>Size: 100mb</p>
-              <br />
-            </div>
-          </div>
+          <BucketDetails details={this.state.details} />
         )}
       </div>
     );

@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { API } from "../../utils/Constants";
+import { API, Token } from "../../utils/Constants";
 
 let schema = Yup.object().shape({
   name: Yup.string().required(),
@@ -22,7 +22,7 @@ export default function Main() {
     fetch(`${API}/buckets`, {
       method: "post",
       headers: {
-        Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
+        Authorization: `Token ${Token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -36,7 +36,7 @@ export default function Main() {
       })
       .then((datas) => {
         console.log(datas);
-          buckets.unshift(datas.bucket);
+        buckets.unshift(datas.bucket);
       });
 
     setShowCreateBucketForm(false);
@@ -46,7 +46,7 @@ export default function Main() {
     fetch(`${API}/buckets`, {
       method: "get",
       headers: {
-        Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
+        Authorization: `Token ${Token}`,
         "Content-Type": "application/json",
       },
     })
