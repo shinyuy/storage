@@ -9,19 +9,25 @@ export default class Bucket extends React.Component {
     files: [],
     show: false,
     details: {},
+    loading: false,
   };
 
   componentDidMount() {
     let bucket = this.props.match.params.id;
-    fetch(`${API}/buckets/${bucket}/objects`, {
-      method: "get",
-      headers: {
-        Authorization: `Token ${Token}`,
-        "Content-Type": "application/json",
+    fetch(
+      `${API}/buckets/${bucket}/objects`,
+      {
+        method: "get",
+        headers: {
+          Authorization: `Token ${Token}`,
+          "Content-Type": "application/json",
+        },
       },
-    })
+      this.setState({ loading: true })
+    )
       .then((response) => response.json())
       .then((datas) => {
+        this.setState({ loading: false });
         this.setState({ files: datas.objects });
       });
   }
@@ -179,18 +185,22 @@ export default class Bucket extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.files.length > 0
-                  ? this.state.files.map((file) => (
-                      <tr
-                        key={file.id}
-                        onClick={() => this.setState({ details: file })}
-                      >
-                        <td>{file.name}</td>
-                        <td>{file.lastModified}</td>
-                        <td>{file.size}</td>
-                      </tr>
-                    ))
-                  : "No objects"}
+                {this.state.files.length > 0 ? (
+                  this.state.files.map((file) => (
+                    <tr
+                      key={file.id}
+                      onClick={() => this.setState({ details: file })}
+                    >
+                      <td>{file.name}</td>
+                      <td>{file.lastModified}</td>
+                      <td>{file.size}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <div class="d-flex justify-content-center">
+                    <strong>Loading...</strong>
+                  </div>
+                )}
               </tbody>
             </table>
           </div>

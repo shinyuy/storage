@@ -11,6 +11,7 @@ let schema = Yup.object().shape({
 });
 
 export default function Main() {
+  const [loading, setLoading] = useState(false);
   const [showCreateBucketForm, setShowCreateBucketForm] = useState(false);
   const [buckets, setBuckets] = useState([]);
   const { register, handleSubmit, errors } = useForm({
@@ -43,15 +44,20 @@ export default function Main() {
   };
 
   useEffect(() => {
-    fetch(`${API}/buckets`, {
-      method: "get",
-      headers: {
-        Authorization: `Token ${Token}`,
-        "Content-Type": "application/json",
+    fetch(
+      `${API}/buckets`,
+      {
+        method: "get",
+        headers: {
+          Authorization: `Token ${Token}`,
+          "Content-Type": "application/json",
+        },
       },
-    })
+      setLoading(true)
+    )
       .then((response) => response.json())
       .then((datas) => {
+        setLoading(false);
         console.log(datas);
         setBuckets(datas.buckets);
       });
@@ -124,21 +130,26 @@ export default function Main() {
               <th scope="col">Location</th>
             </tr>
           </thead>
+
           <tbody>
-            {buckets.length > 0
-              ? buckets.map((bucket) => (
-                  <tr key={bucket.id}>
-                    <td>
-                      <Link to={`/buckets/${bucket.id}`}>{bucket.name}</Link>{" "}
-                    </td>
-                    <td>
-                      <Link to={`/buckets/${bucket.id}`}>
-                        {bucket.location.name}
-                      </Link>{" "}
-                    </td>
-                  </tr>
-                ))
-              : "No buckets"}
+            {buckets.length > 0 ? (
+              buckets.map((bucket) => (
+                <tr key={bucket.id}>
+                  <td>
+                    <Link to={`/buckets/${bucket.id}`}>{bucket.name}</Link>{" "}
+                  </td>
+                  <td>
+                    <Link to={`/buckets/${bucket.id}`}>
+                      {bucket.location.name}
+                    </Link>{" "}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <div className="d-flex justify-content-center text-center">
+                <strong>Loading...</strong>
+              </div>
+            )}
           </tbody>
         </table>
       </div>
