@@ -6,10 +6,23 @@ import BucketDetails from "./BucketDetails";
 export default class Bucket extends React.Component {
   state = {
     active: 1,
-    files: [],
+    files: [
+      {
+        name: "kflsvbdkhbfsk",
+        lastModified: "n,vbfvvfhjalaf",
+        size: "vafhljkvflhjvf",
+      },
+      {
+        name: "Yoooo",
+        lastModified: "YOOOOO",
+        size: "yOOOOO",
+      },
+    ],
     show: false,
     details: {},
     loading: false,
+    success: false,
+    fail: false,
   };
 
   componentDidMount() {
@@ -28,33 +41,13 @@ export default class Bucket extends React.Component {
       .then((response) => response.json())
       .then((datas) => {
         this.setState({ loading: false });
-        this.setState({ files: datas.objects });
+        //this.setState({ files: datas.objects });
       });
   }
 
   onChangeFile = (event) => {
     event.stopPropagation();
     event.preventDefault();
-    /* const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.src = reader.result;
-      console.log(img.src);
-      let bucket = this.props.match.params.id;
-      fetch(`${API}/buckets/${bucket}/objects`, {
-        method: "post",
-        headers: {
-          Authorization: `Token 10af0cbc-2532-4de3-90a9-21ee51e09458`,
-          // "Content-Type": "multipart/form-data; boundary=l3iPy71otz",
-        },
-        data: JSON.stringify({ bucket: bucket, file: img.src }),
-      })
-        .then((response) => response.json())
-        .then((datas) => {
-          console.log(datas);
-        });
-    };
-    reader.readAsDataURL(event.target.files[0]);*/
 
     var file = event.target.files[0];
     console.log(file);
@@ -72,7 +65,15 @@ export default class Bucket extends React.Component {
       },
       data: form,
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response.status);
+        if (response.status === 200 || response.status === 201) {
+          this.setState({ success: true });
+        } else {
+          this.setState({ fail: true });
+        }
+        response.json();
+      })
       .then((datas) => {
         console.log(datas);
       });
@@ -92,6 +93,10 @@ export default class Bucket extends React.Component {
         console.log(datas);
         this.props.history.push("/");
       });
+  };
+
+  reset = () => {
+    this.setState({ success: false });
   };
 
   render() {
@@ -118,6 +123,26 @@ export default class Bucket extends React.Component {
           </Modal.Footer>
         </Modal>
         <h1>MyNewStorage</h1>
+        {this.state.success ? (
+          <div class="alert alert-success" role="alert">
+            {setTimeout(function () {
+              //  this.setState({ success: false });
+            }, 3000)}
+            Object creation successfully!
+          </div>
+        ) : (
+          ""
+        )}
+        {this.state.fail ? (
+          <div class="alert alert-danger" role="alert">
+            {setTimeout(function () {
+              //this.setState({ fail: false });
+            }, 3000)}
+            Object creation failed, try again.
+          </div>
+        ) : (
+          ""
+        )}
         <ul className="nav nav-tabs">
           <li className="nav-item">
             <span
@@ -188,8 +213,11 @@ export default class Bucket extends React.Component {
                 {this.state.files.length > 0 ? (
                   this.state.files.map((file) => (
                     <tr
+                      style={{ cursor: "pointer" }}
                       key={file.id}
-                      onClick={() => this.setState({ details: file })}
+                      onClick={() =>
+                        this.setState({ details: file, active: 2 })
+                      }
                     >
                       <td>{file.name}</td>
                       <td>{file.lastModified}</td>

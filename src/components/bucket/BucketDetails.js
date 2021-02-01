@@ -49,11 +49,17 @@ export default function BucketDetails({ details }) {
         </button>
       </div>
       <div className="row">
-        <p>File Name: {details.name}</p>
+        <p className="text-left" style={{ width: "100%" }}>
+          File Name: {details.name}
+        </p>
         <br />
-        <p>Location: {details.lastModified}</p>
+        <p className="text-left" style={{ width: "100%" }}>
+          Location: {details.lastModified}
+        </p>
         <br />
-        <p>Size: {details.size}</p>
+        <p className="text-left" style={{ width: "100%" }}>
+          Size: {details.size}
+        </p>
         <br />
       </div>
     </div>

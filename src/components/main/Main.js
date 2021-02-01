@@ -14,6 +14,8 @@ export default function Main() {
   const [loading, setLoading] = useState(false);
   const [showCreateBucketForm, setShowCreateBucketForm] = useState(false);
   const [buckets, setBuckets] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const [fail, setFail] = useState(false);
   const { register, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema),
   });
@@ -30,14 +32,18 @@ export default function Main() {
     })
       .then((response) => {
         console.log(response.status); // Will show you the status
-        if (!response.ok) {
-          throw new Error("HTTP status " + response.status);
+        if (response.status === 200 || response.status === 201) {
+          setSuccess(true);
+        } else {
+          setFail(true);
         }
         return response.json();
       })
       .then((datas) => {
         console.log(datas);
-        buckets.unshift(datas.bucket);
+        if (datas.bucket) {
+          buckets.unshift(datas.bucket);
+        }
       });
 
     setShowCreateBucketForm(false);
@@ -66,6 +72,26 @@ export default function Main() {
   return (
     <div className="container">
       <h1 className="text-left">Bucket List</h1>
+      {success ? (
+        <div class="alert alert-success" role="alert">
+          {setTimeout(function () {
+            setSuccess(false);
+          }, 3000)}
+          Bucket created successfully!
+        </div>
+      ) : (
+        ""
+      )}
+      {fail ? (
+        <div class="alert alert-danger" role="alert">
+          {setTimeout(function () {
+            setFail(false);
+          }, 3000)}
+          Bucket creation failed, try again.
+        </div>
+      ) : (
+        ""
+      )}
       {showCreateBucketForm ? (
         <div>
           <h5 className="text-left pt-3">Create New Bucket</h5>
@@ -114,7 +140,7 @@ export default function Main() {
       )}
 
       <div className="row pt-3 d-flex justify-content-between">
-        <h5>All Buckets(2)</h5>
+        <h5>All Buckets({buckets.length})</h5>
         <button
           className="btn btn-primary"
           onClick={() => setShowCreateBucketForm(true)}
