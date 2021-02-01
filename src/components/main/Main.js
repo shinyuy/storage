@@ -39,10 +39,10 @@ export default function Main() {
         }
         return response.json();
       })
-      .then((datas) => {
-        console.log(datas);
-        if (datas.bucket) {
-          buckets.unshift(datas.bucket);
+      .then((data) => {
+        console.log(data);
+        if (data.bucket) {
+          buckets.unshift(data.bucket);
         }
       });
 
@@ -64,7 +64,6 @@ export default function Main() {
       .then((response) => response.json())
       .then((datas) => {
         setLoading(false);
-        console.log(datas);
         setBuckets(datas.buckets);
       });
   }, []);

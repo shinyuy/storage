@@ -17,8 +17,8 @@ export default function BucketDetails({ details }) {
       },
     })
       .then((response) => response.json())
-      .then((datas) => {
-        console.log(datas);
+      .then((data) => {
+        console.log(data);
         history.push(`/buckets/${id}`);
       });
   };

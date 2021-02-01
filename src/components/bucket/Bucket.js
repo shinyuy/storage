@@ -12,10 +12,26 @@ export default class Bucket extends React.Component {
     loading: false,
     success: false,
     fail: false,
+    bucket: {},
   };
 
   componentDidMount() {
     let bucket = this.props.match.params.id;
+    fetch(
+      `${API}/buckets/${bucket}`,
+      {
+        method: "get",
+        headers: {
+          Authorization: `Token ${Token}`,
+          "Content-Type": "application/json",
+        },
+      },
+      this.setState({ loading: true })
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ bucket: data.bucket });
+      });
     fetch(
       `${API}/buckets/${bucket}/objects`,
       {
@@ -28,9 +44,9 @@ export default class Bucket extends React.Component {
       this.setState({ loading: true })
     )
       .then((response) => response.json())
-      .then((datas) => {
+      .then((data) => {
         this.setState({ loading: false });
-        //this.setState({ files: datas.objects });
+        this.setState({ files: data.objects });
       });
   }
 
@@ -63,8 +79,8 @@ export default class Bucket extends React.Component {
         }
         response.json();
       })
-      .then((datas) => {
-        console.log(datas);
+      .then((data) => {
+        console.log(data);
       });
   };
 
@@ -111,7 +127,7 @@ export default class Bucket extends React.Component {
             </button>
           </Modal.Footer>
         </Modal>
-        <h1>MyNewStorage</h1>
+        <h1>{this.state.bucket.name}</h1>
         {this.state.success ? (
           <div class="alert alert-success" role="alert">
             {setTimeout(function () {
