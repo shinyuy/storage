@@ -3,4 +3,7 @@ import Main from "./Main";
 
 import { shallow } from "enzyme";
 
-it("render correctly text component", () => {});
+it("renders correctly", () => {
+  const wrapper = shallow(<Main />);
+  expect(wrapper).toMatchSnapshot();
+});

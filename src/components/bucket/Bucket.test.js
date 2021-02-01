@@ -3,4 +3,7 @@ import Bucket from "./Bucket";
 
 import { shallow } from "enzyme";
 
-it("render correctly text component", () => {});
+it("renders correctly", () => {
+  const wrapper = shallow(<Bucket />);
+  expect(wrapper).toMatchSnapshot();
+});
