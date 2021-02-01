@@ -1,11 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import App from "./App";
+import Navbar from "./Navbar";
 
-import { configure, shallow } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
-configure({ adapter: new Adapter() });
+import { shallow } from "enzyme";
 
-it("render correctly text component", () => {
-  const TextInputComponent = renderer.create(<TextInput />).toJSON();
-  expect(TextInputComponent).toMatchSnapshot();
-});
+it("render correctly text component", () => {});
