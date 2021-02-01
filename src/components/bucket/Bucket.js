@@ -6,18 +6,7 @@ import BucketDetails from "./BucketDetails";
 export default class Bucket extends React.Component {
   state = {
     active: 1,
-    files: [
-      {
-        name: "kflsvbdkhbfsk",
-        lastModified: "n,vbfvvfhjalaf",
-        size: "vafhljkvflhjvf",
-      },
-      {
-        name: "Yoooo",
-        lastModified: "YOOOOO",
-        size: "yOOOOO",
-      },
-    ],
+    files: [],
     show: false,
     details: {},
     loading: false,
